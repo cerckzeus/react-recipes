@@ -33,7 +33,6 @@ export const registerAction = (requestData: actionCreatorProps) => {
       );
 
       const data = await res.json();
-      console.log(data);
 
       if (!res.ok) {
         //throw error
@@ -56,7 +55,6 @@ export const registerAction = (requestData: actionCreatorProps) => {
         }
       );
       const data = await res.json();
-      console.log(data);
       if (!res.ok) {
         //throw error
       }
@@ -88,7 +86,6 @@ export const logInAction = (requestData: actionCreatorProps) => {
       );
 
       const data = await res.json();
-      console.log(data);
 
       if (!res.ok) {
         let errorMessage = "Authentication failed!";
@@ -120,7 +117,6 @@ export const fetchRecipes = async (q?: string) => {
     `https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=092de4ac&app_key=2686ceaeae3b106d11493ce109540622`
   );
 
-  console.log(res);
   return res;
 };
 
@@ -146,10 +142,12 @@ export const fetchFavoriteAction = () => {
 
       const data = await res.data;
 
-      console.log("RESPONSE DATA OF FAVORITES:");
-      console.log(data);
-
-      return data;
+      if (data === null) {
+        return [];
+      }
+      if (data !== null) {
+        return data;
+      }
     };
 
     try {
@@ -171,7 +169,6 @@ export const sendFavoriteAction = (favorites: faveSliceState) => {
       if (res.status !== 200) {
         //throw error
       }
-
     };
     try {
       await sendDataRequest();
@@ -182,7 +179,6 @@ export const sendFavoriteAction = (favorites: faveSliceState) => {
 export const paginate = async (url: string) => {
   const res = await Axios.get(url);
 
-  console.log(res);
   return res;
 };
 

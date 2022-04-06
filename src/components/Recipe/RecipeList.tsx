@@ -53,6 +53,7 @@ const Home: React.FC = () => {
   };
 
   const nextPageHandler = () => {
+    window[`scrollTo`]({top: 0, behavior: `smooth`});
     dispatch(pageActions.incCurrIdx());
     const fetchData = async () => {
       let result = await paginate(pageLinks[currIdx + 1]);
@@ -66,6 +67,7 @@ const Home: React.FC = () => {
   };
 
   const prevPageHandler = () => {
+    window[`scrollTo`]({top: 0, behavior: `smooth`});
     dispatch(pageActions.decCurrIdx());
     const fetchData = async () => {
       let result = await paginate(pageLinks[currIdx - 1]);
@@ -134,7 +136,7 @@ const RecipeListWrapper = styled.div`
   width: 100vw;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   & .search-filled {
     margin-top: 1rem;
