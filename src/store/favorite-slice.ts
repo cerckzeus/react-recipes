@@ -10,6 +10,10 @@ const favoriteSlice = createSlice({
   initialState,
   name: "favorite",
   reducers: {
+    clearFavorites(state) {
+    state.faveRecipes = [];
+    state.changed = false;
+  },
     replaceFavorites: (state, action) => {
         state.faveRecipes = action.payload;
     },

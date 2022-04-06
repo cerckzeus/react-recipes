@@ -120,4 +120,23 @@ export const RecipeDetailsContent = styled(Paper)`
       text-align: start;
     }
   }
+
+  @media screen and (max-width: 780px) {
+    width: 95vw;
+  }
+  @media screen and (max-width: 570px) {
+    font-size: 0.8rem;
+    .head-content {
+      flex-direction: column;
+    }
+  }
+  @media screen and (max-width: 410px) {
+    font-size: 0.6rem;
+    .head-content {
+      flex-direction: column;
+    }
+    .recipe-details {
+      flex-direction: column;
+    }
+  }
 `;

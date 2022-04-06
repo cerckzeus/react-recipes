@@ -25,17 +25,15 @@ const StyledAuthForm = styled(Box)<BoxProps>(() => ({
   },
   "& form": {
     textAlign: "center",
-    ".MuiBox-root": {
-    },
     ".action": {
-      marginTop: "40px"
-    }
+      marginTop: "40px",
+    },
   },
   "& h1": {
     textAlign: "center",
-    marginBottom:"30px",
+    marginBottom: "30px",
     fontSize: "3rem",
-    color: "#15cdfc"
+    color: "#28a835",
   },
   "& .toggle": {
     cursor: "pointer",

@@ -100,7 +100,7 @@ export const logInAction = (requestData: actionCreatorProps) => {
       const loginData = await fetchLoginData();
       dispatch(authActions.login(loginData));
       dispatch(uiActions.setLoadingStatus("success"));
-      // dispatch(fetchCartAction());
+      dispatch(fetchFavoriteAction());
     } catch (error) {
       console.log("At catch part:");
       console.log(error);

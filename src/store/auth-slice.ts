@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { favoriteActions } from "./favorite-slice";
 
 
 interface authSliceState {
@@ -42,11 +43,11 @@ const authSlice = createSlice({
   },
 });
 
-// export const logOutAction = () => {
-//     return (dispatch: any) => {
-//       dispatch(cartActions.clearCart());
-//     };
-// };
+export const logOutAction = () => {
+    return (dispatch: any) => {
+      dispatch(favoriteActions.clearFavorites());
+    };
+};
 
 
 export const authActions = authSlice.actions;

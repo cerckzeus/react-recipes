@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { selectAuth } from "../../store";
-import { authActions } from "../../store/auth-slice";
+import { authActions, logOutAction } from "../../store/auth-slice";
 import {
   Bars,
   Nav,
@@ -17,9 +17,9 @@ const MainNavigation = () => {
   const { isLoggedIn } = useSelector(selectAuth);
 
   const logoutHandler = () => {
-    // dispatch(logOutAction());
+    dispatch(logOutAction());
     dispatch(authActions.logout());
-    history.push("/");
+    history.push("/sign-in");
   };
 
   const signinHandler = () => {
@@ -27,7 +27,7 @@ const MainNavigation = () => {
   };
   return (
     <Nav>
-      <NavLink to="/">LOGO</NavLink>
+      <NavLink to="/">REACT RECIPES</NavLink>
       <Bars />
       {isLoggedIn && (
         <NavMenu>
@@ -35,7 +35,6 @@ const MainNavigation = () => {
             Recipes
           </NavLink>
           <NavLink to="/favorites">Favorites</NavLink>
-          <NavLink to="/about">About</NavLink>
         </NavMenu>
       )}
       <NavBtn>
