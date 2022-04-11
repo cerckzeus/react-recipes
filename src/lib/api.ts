@@ -1,5 +1,6 @@
 import Axios from "axios";
 import { faveSliceState } from "../models/FaveSliceState";
+import { filters } from "../models/Filters";
 import { authActions } from "../store/auth-slice";
 import { favoriteActions } from "../store/favorite-slice";
 import { uiActions } from "../store/ui-slice";
@@ -106,16 +107,28 @@ export const logInAction = (requestData: actionCreatorProps) => {
   };
 };
 
-export const fetchRecipes = async (q?: string) => {
+export const fetchRecipes = async (q: string, filtersQuery: filters) => {
   let query = "";
   if (!q) {
-    query = "";
+    query = "chicken";
   } else {
     query = q;
   }
-  const res = await Axios.get(
-    `https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=092de4ac&app_key=2686ceaeae3b106d11493ce109540622`
-  );
+  const serializeQuery = (query:string[]) => {
+    return query.map(item=>item.split(" ").join("%20"));
+  };
+  const diet = filtersQuery.diet.join("&diet=");
+  const mealType = filtersQuery.mealType.join("&mealType=");
+  const cuisineType = serializeQuery(filtersQuery.cuisineType).join("&cuisineType=");
+  const dishType = serializeQuery(filtersQuery.dishType).join("&dishType=");
+
+  const queryString = `https://api.edamam.com/api/recipes/v2?type=public&app_id=092de4ac&app_key=2686ceaeae3b106d11493ce109540622&q=${query}${
+    filtersQuery.diet.length > 0 ? `&diet=${diet}` : ""
+  }${filtersQuery.cuisineType.length > 0 ? `&cuisineType=${cuisineType}` : ""}${
+    filtersQuery.mealType.length > 0 ? `&mealType=${mealType}` : ""
+  }${filtersQuery.dishType.length > 0 ? `&dishType=${dishType}` : ""}`;
+
+  const res = await Axios.get(queryString);
 
   return res;
 };

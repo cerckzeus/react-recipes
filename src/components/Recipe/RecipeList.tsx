@@ -1,22 +1,25 @@
-import { SearchOutlined } from "@mui/icons-material";
-import { Box, IconButton, InputAdornment, Paper } from "@mui/material";
-import { Field, Form, Formik } from "formik";
-import { TextField } from "formik-mui";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { fetchRecipes, paginate } from "../../lib/api";
 import { RecipeResultType } from "../../models/RecipeResult";
 import { selectPage } from "../../store";
 import { pageActions } from "../../store/page-slice";
 import RecipeItem from "./RecipeItem";
+import RecipeContentHeader from "./RecipeContentHeader";
+import { filters } from "../../models/Filters";
 
-let isInitial = true;
+// let isInitial = true;
 
 const Home: React.FC = () => {
   const [recipes, setRecipes] = useState([]);
-  const history = useHistory();
+  const [filtersQuery, setFiltersQuery] = useState<filters>({
+    cuisineType: [],
+    diet: [],
+    dishType: [],
+    mealType: [],
+  });
   const location = useLocation();
   const dispatch = useDispatch();
   const { currIdx, pageLinks } = useSelector(selectPage);
@@ -27,33 +30,31 @@ const Home: React.FC = () => {
   useEffect(() => {
     dispatch(pageActions.clearPageState());
     const fetchData = async () => {
-      let result;
-      if (isInitial === false && !!queryParams.get("q")) {
-        result = await fetchRecipes(queryParams.get("q")!);
-      } else {
-        result = await fetchRecipes("chicken");
-      }
+      let result = await fetchRecipes(queryParams.get("q")!, filtersQuery);
 
       if (result.data.hits.length > 0) {
-        dispatch(
-          pageActions.initialStorePageLinks([
-            result.config.url!,
-            result.data._links.next.href,
-          ])
-        );
-        setRecipes(result.data.hits);
+        if (!result.data._links.next) {
+          dispatch(pageActions.initialStorePageLinks([result.config.url!]));
+        } else {
+          dispatch(
+            pageActions.initialStorePageLinks([
+              result.config.url!,
+              result.data._links.next.href,
+            ])
+          );
+        }
       }
+      setRecipes(result.data.hits);
     };
-    isInitial = false;
     fetchData();
-  }, [queryParams, dispatch]);
+  }, [queryParams, dispatch, filtersQuery]);
 
-  const initialValues: { search: string } = {
-    search: "",
+  const setFiltersHandler = (filters: filters) => {
+    setFiltersQuery(filters);
   };
 
   const nextPageHandler = () => {
-    window[`scrollTo`]({top: 0, behavior: `smooth`});
+    window[`scrollTo`]({ top: 0, behavior: `smooth` });
     dispatch(pageActions.incCurrIdx());
     const fetchData = async () => {
       let result = await paginate(pageLinks[currIdx + 1]);
@@ -67,7 +68,7 @@ const Home: React.FC = () => {
   };
 
   const prevPageHandler = () => {
-    window[`scrollTo`]({top: 0, behavior: `smooth`});
+    window[`scrollTo`]({ top: 0, behavior: `smooth` });
     dispatch(pageActions.decCurrIdx());
     const fetchData = async () => {
       let result = await paginate(pageLinks[currIdx - 1]);
@@ -79,42 +80,7 @@ const Home: React.FC = () => {
 
   return (
     <RecipeListWrapper>
-      <Paper className="search-filled">
-        <Formik
-          initialValues={initialValues}
-          onSubmit={(values, { setSubmitting }) => {
-            setSubmitting(false);
-            history.push(`/?q=${values.search}`);
-          }}
-        >
-          {({ submitForm }) => (
-            <Form>
-              <Box margin={1}>
-                <Field
-                  component={TextField}
-                  name="search"
-                  type="search"
-                  label="Search"
-                  fullWidth
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="search"
-                          onClick={submitForm}
-                          edge="end"
-                        >
-                          <SearchOutlined />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Box>
-            </Form>
-          )}
-        </Formik>
-      </Paper>
+      <RecipeContentHeader setFilters={setFiltersHandler} />
       <RecipesWrapper>
         {recipes.length === 0 && <p>No data found.</p>}
         {recipes.map((item: RecipeResultType, idx) => (
@@ -123,9 +89,15 @@ const Home: React.FC = () => {
       </RecipesWrapper>
       <div>
         {currIdx !== 0 && (
-          <PaginationButton onClick={prevPageHandler}>BACK</PaginationButton>
+          <PaginationButton type="button" onClick={prevPageHandler}>
+            BACK
+          </PaginationButton>
         )}
-        <PaginationButton onClick={nextPageHandler}>NEXT</PaginationButton>
+        {pageLinks.length > 1 && (
+          <PaginationButton type="button" onClick={nextPageHandler}>
+            NEXT
+          </PaginationButton>
+        )}
       </div>
     </RecipeListWrapper>
   );
@@ -138,17 +110,6 @@ const RecipeListWrapper = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  & .search-filled {
-    margin-top: 1rem;
-    padding: 0.5rem;
-    width: 700px;
-  }
-
-  @media screen and (max-width: 720px) {
-    & .search-filled {
-    width: 90vw;
-  }
-  }
 `;
 
 const PaginationButton = styled.button`

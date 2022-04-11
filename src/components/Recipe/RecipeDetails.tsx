@@ -68,7 +68,7 @@ const RecipeDetails: React.FC = () => {
 
   const reactToPrintContent = React.useCallback(() => {
     return componentRef.current;
-  }, [componentRef.current]);
+  }, []);
 
   const reactToPrintTrigger = React.useCallback(() => {
     return (

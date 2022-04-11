@@ -28,7 +28,7 @@ const SignUp: React.FC = () => {
       dispatch(uiActions.setLoadingStatus(""));
       history.push("/sign-in");
     }
-  }, [loadingStatus, history]);
+  }, [loadingStatus, history, dispatch]);
 
   const initialValues: FormValues = {
     email: "",
